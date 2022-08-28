@@ -4,9 +4,9 @@
 $subname = "Visual Studio Enterprise Subscription"
 $sub = Get-AzSubscription -SubscriptionName $subname
 Select-AzSubscription -SubscriptionObject $sub
-[Environment]::SetEnvironmentVariable('Foo', 'Bar', 'User')
-export AZDO_PERSONAL_ACCESS_TOKEN=<Personal Access Token>
-export AZDO_ORG_SERVICE_URL=https://dev.azure.com/<Your Org Name>
+$env:AZDO_PERSONAL_ACCESS_TOKEN = ''
+$env:AZDO_ORG_SERVICE_URL = 'https://dev.azure.com/cloudkingdoms'
+
 
 #variables to make up the name 
 $location = "uksouth"
@@ -18,20 +18,29 @@ $you = "gabriel@cloudkingdoms.com"
 #set the tf environment
 $rgname = "$($org)-$($locationshort)-$($projectshort)-rg-tf".toLower()
 $saname = ("$($org)$($locationshort)$($projectshort)tf").toLower() + (Get-Random -Minimum 1000 -maximum 9999)
-
+$kvname = ("$($org)$($locationshort)$($projectshort)tf").toLower() + (Get-Random -Minimum 1000 -maximum 9999)
 
 $rg = New-AzResourceGroup -Name $rgname -Location $location
 $sa = New-AzStorageAccount  -Name $saname -ResourceGroupName $rgname -Location $location `
 -SkuName "Standard_LRS" -Kind "StorageV2" -EnableHTTPsTrafficOnly $True `
 -AllowCrossTenantReplication  $False -AllowSharedKeyAccess $False
-
+$kv = New-AzKeyVault -Name $kvname -ResourceGroupName $rgname -Location $location -EnableRbacAuthorization -Sku 'Standard' 
+Set-AzKeyVaultAccessPolicy -
+New-AzRoleAssignment -RoleDefinitionName "Key Vault Secrets Officer" `
+-SignInName $you -Scope $kv.ResourceId
 
 New-AzRoleAssignment -RoleDefinitionName "Storage Account Contributor" `
 -SignInName $you -Scope $sa.Id
 
-#wait for the perms
-Start-Sleep -Seconds 30
 
+#wait for the perms
+Start-Sleep -Seconds 60
+
+#Log the secrets for later
+Set-AzKeyVaultSecret -VaultName $kvname -Name "AZDO-PERSONAL-ACCESS-TOKEN" `
+-SecretValue (ConvertTo-SecureString -AsPlainText -Force -String $env:AZDO_PERSONAL_ACCESS_TOKEN)
+Set-AzKeyVaultSecret -VaultName $kvname -Name "AZDO-ORG-SERVICE-URL" `
+-SecretValue (ConvertTo-SecureString -AsPlainText -Force -String $env:AZDO_ORG_SERVICE_URL)
 #create the storage container (if errors then wait longer)
 $sacontname = "tfstate"
 $context = New-AzStorageContext -StorageAccountName $saname 
@@ -48,7 +57,15 @@ use_azuread_auth     = true
 key                  = "useless.devops.tfstate"
 "@
 
-$backend >> ./terraform/backend.conf
+$tfvars = @"
+tenantId            = "$($sub.TenantId)"
+subscriptionId      = "$($sub.Id)"
+subscriptionName      = "$($subname)"
+"@
+
+$tfvars | Out-File -FilePath "./terraform/useless.auto.tfvars" -NoClobber  
+$backend | Out-File -FilePath "./terraform/backend.conf" -NoClobber
+
 cd ./terraform
 terraform init --backend-config=backend.conf 
 
