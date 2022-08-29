@@ -11,7 +11,7 @@ resource "azuredevops_build_definition" "useless" {
     repo_type   = "TfsGit"
     repo_id     = azuredevops_git_repository.useless.id
     branch_name = azuredevops_git_repository.useless.default_branch
-    yml_path    = "rootpipeline.yml"
+    yml_path    = ".pipelines/rootpipeline.yml"
   }
 
 }

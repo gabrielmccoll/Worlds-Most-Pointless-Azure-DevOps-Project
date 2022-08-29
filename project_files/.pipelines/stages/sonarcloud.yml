@@ -1,0 +1,21 @@
+
+stages:
+- stage: Sonar
+  displayName: SonarCloud Scan
+  jobs:
+  - job: Scan
+    steps:
+      - task: SonarCloudPrepare@1
+        inputs:
+          SonarCloud: 'SonarCloud'
+          organization: 'gabrielmccoll'
+          scannerMode: 'CLI'
+          configMode: 'manual'
+          cliProjectKey: 'UselessADO'
+          cliSources: '.'
+      - task: SonarCloudAnalyze@1
+      - task: SonarCloudPublish@1
+        inputs:
+          pollingTimeoutSec: '300'
+
+

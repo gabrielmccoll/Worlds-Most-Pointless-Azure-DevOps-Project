@@ -13,6 +13,14 @@ resource "azuredevops_git_repository_file" "rootpipeline" {
     repository_id = azuredevops_git_repository.useless.id
     branch = "refs/heads/main"
     commit_message =   "initial useless seed"
-    file = "rootpipeline.yml"
-    content = file("${path.module}/project_files/rootpipeline.yml")
+    file = ".pipelines/rootpipeline.yml"
+    content = file("${path.module}/../project_files/.pipelines/rootpipeline.yml")
+}
+
+resource "azuredevops_git_repository_file" "templatesonar" {
+    repository_id = azuredevops_git_repository.useless.id
+    branch = "refs/heads/main"
+    commit_message =   "initial useless seed"
+    file = ".pipelines/stages/sonarcloud.yml"
+    content = file("${path.module}/../project_files/.pipelines/stages/sonarcloud.yml")
 }
