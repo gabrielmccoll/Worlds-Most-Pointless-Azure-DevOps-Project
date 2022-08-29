@@ -29,7 +29,7 @@ Set-AzKeyVaultAccessPolicy -
 New-AzRoleAssignment -RoleDefinitionName "Key Vault Secrets Officer" `
 -SignInName $you -Scope $kv.ResourceId
 
-New-AzRoleAssignment -RoleDefinitionName "Storage Account Contributor" `
+New-AzRoleAssignment -RoleDefinitionName "Storage Blob Data Contributor" `
 -SignInName $you -Scope $sa.Id
 
 
@@ -65,6 +65,26 @@ subscriptionName      = "$($subname)"
 
 $tfvars | Out-File -FilePath "./terraform/useless.auto.tfvars" -NoClobber  
 $backend | Out-File -FilePath "./terraform/backend.conf" -NoClobber
+
+
+
+$backendproject = @"
+tenant_id            = "$($sub.TenantId)"
+subscription_id      = "$($sub.Id)"
+resource_group_name  = "$($rgname)"
+storage_account_name = "$($saname)"
+container_name       = "$($sacontname)"
+use_azuread_auth     = true
+key                  = "useless.project.tfstate"
+"@
+
+$tfvarsproject = @"
+tenantId            = "$($sub.TenantId)"
+subscriptionId      = "$($sub.Id)"
+subscriptionName      = "$($subname)"
+"@
+$tfvarsproject | Out-File -FilePath "./project_files/terraform/useless.auto.tfvars" -NoClobber  
+$backendproject | Out-File -FilePath "./project_files/terraform/backend.conf" -NoClobber
 
 cd ./terraform
 terraform init --backend-config=backend.conf 

@@ -1,21 +1,53 @@
 
 stages:
-- stage: Sonar
-  displayName: SonarCloud Scan
+- stage: Terraform
+  displayName: Terraform Steps
   jobs:
-  - job: Scan
+  - job: Apply
+    variables:
+      workingdir: terraform
+      subid: "3a6a8d54-fdf9-4100-aa23-4a6a49e24527"
     steps:
-      - task: SonarCloudPrepare@1
+      - task: AzureCLI@2
+        displayName: Terraform Init
         inputs:
-          SonarCloud: 'SonarCloud'
-          organization: 'gabrielmccoll'
-          scannerMode: 'CLI'
-          configMode: 'manual'
-          cliProjectKey: 'UselessADO'
-          cliSources: '.'
-      - task: SonarCloudAnalyze@1
-      - task: SonarCloudPublish@1
+          workingDirectory: $(workingdir)
+          azureSubscription: 'UselessProject'
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+              export ARM_CLIENT_ID="$servicePrincipalId"
+              export ARM_CLIENT_SECRET="$servicePrincipalKey"
+              export ARM_SUBSCRIPTION_ID=$(subid)
+              export ARM_TENANT_ID="$tenantId"
+              terraform init --backend-config=backend.conf
+          addSpnToEnvironment: true
+      - task: AzureCLI@2
+        displayName: Terraform Plan
         inputs:
-          pollingTimeoutSec: '300'
-
+          workingDirectory: $(workingdir)
+          azureSubscription: 'UselessProject'
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+              export ARM_CLIENT_ID="$servicePrincipalId"
+              export ARM_CLIENT_SECRET="$servicePrincipalKey"
+              export ARM_SUBSCRIPTION_ID=$(subid)
+              export ARM_TENANT_ID="$tenantId"
+              terraform plan
+          addSpnToEnvironment: true
+      - task: AzureCLI@2
+        displayName: Terraform Apply
+        inputs:
+          workingDirectory: $(workingdir)
+          azureSubscription: 'UselessProject'
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+              export ARM_CLIENT_ID="$servicePrincipalId"
+              export ARM_CLIENT_SECRET="$servicePrincipalKey"
+              export ARM_SUBSCRIPTION_ID=$(subid)
+              export ARM_TENANT_ID="$tenantId"
+              terraform apply --auto-approve
+          addSpnToEnvironment: true
 

@@ -17,6 +17,12 @@ resource "azurerm_role_assignment" "tf" {
   role_definition_name = "Contributor"
 }
 
+resource "azurerm_role_assignment" "storage" {
+  scope                = data.azurerm_subscription.current.id
+  principal_id         = azuread_service_principal.tf.id
+  role_definition_name = "Storage Blob Data Contributor"
+}
+
 resource "time_rotating" "tf" {
   rotation_days = 7
 }

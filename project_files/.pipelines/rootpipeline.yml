@@ -3,8 +3,7 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-trigger:
-- main
+trigger: none
 
 pool:
   vmImage: ubuntu-latest
@@ -23,4 +22,5 @@ stages:
             Get-AzSubscription
           pwsh: true
 - template: ./stages/sonarcloud.yml
+- template: ./stages/terraform.yml
     
