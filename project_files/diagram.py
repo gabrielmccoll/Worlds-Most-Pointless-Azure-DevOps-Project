@@ -1,17 +1,20 @@
 # diagram.py
-from diagrams import *
-from diagrams.azure.devops import *
-from diagrams.azure.network import (
-    VirtualNetworks,
-    Subnets,
-    NetworkSecurityGroupsClassic,
-)
+from diagrams import Diagram, Cluster, Edge
+from diagrams.azure.devops import Pipelines, Repos
+from diagrams.azure.network import Subnets
+
+from diagrams.azure.storage import StorageAccounts
 
 with Diagram("Useless", show=False):
-    with Cluster("AzureDevops"):
-        pipelines = [Pipelines("terraform"), Pipelines("app code")]
-        Repos("useless") >> Edge(color="red", style="dashed") >> pipelines
+    with Cluster("Azure"):
+        with Cluster("Vnet - 10.0.0.0/16"):
+            vnet = Subnets("Storage 10.0.0.0/24")
+        storage = StorageAccounts("Storage Account")
 
-    graph_attr = {"class": "VirtualNetworks"}
-    with Cluster("Azure", graph_attr=graph_attr):
-        VirtualNetworks("vnet") >> Subnets("snet1")
+    with Cluster("AzureDevops"):
+        repo = Repos("project_files")
+        with Cluster("Pipeline"):
+            tfpipe = Pipelines("Deploy Terraform")
+            sonarpipe = Pipelines("SonarCube Scan")
+            sonarpipe >> tfpipe >> vnet
+        repo >> sonarpipe
