@@ -1,0 +1,29 @@
+{
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": false,
+    "python.analysis.extraPaths": [
+        "**venv**",
+        "project_files/venv",
+        "./project_files/venv/lib",
+        "project_files/",
+        "./project_files",
+        "./venv",
+        "./project_files/venv/lib",
+        "./venv/lib"
+    ],
+    "python.autoComplete.extraPaths": [
+        "./project_files/venv",
+        "./project_files/venv/lib",
+        "./project_files/",
+        "./venv/lib",
+        "./venv/",
+        "./lib"
+    ],
+    "python.analysis.watchSearchPaths": true,
+    "yaml.schemas": {
+        "https://raw.githubusercontent.com/microsoft/azure-pipelines-vscode/master/service-schema.json": [
+            "file:///Users/gabrielmccoll/Documents/Worlds-Most-Pointless-Azure-DevOps-Project/project_files/.pipelines/stages/SonarCloud.yml",
+            "file:///Users/gabrielmccoll/Documents/Worlds-Most-Pointless-Azure-DevOps-Project/project_files/.pipelines/rootpipeline.yml"
+        ]
+    }
+}
