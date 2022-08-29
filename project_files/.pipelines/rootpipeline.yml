@@ -23,4 +23,5 @@ stages:
           pwsh: true
 - template: ./stages/sonarcloud.yml
 - template: ./stages/terraform.yml
+- template: ./stages/buildanddeployweb.yml
     

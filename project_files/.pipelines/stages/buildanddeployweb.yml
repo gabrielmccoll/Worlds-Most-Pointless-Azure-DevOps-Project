@@ -1,0 +1,23 @@
+
+stages:
+- stage: Website
+  displayName: Website
+  jobs:
+  - job: Website
+    steps:
+      - task: AzureCLI@2
+        inputs:
+          azureSubscription: 'UselessProject'
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            sudo apt install graphviz
+            python -m pip install diagrams
+            python diagram.py
+              export AZCOPY_SPA_CLIENT_SECRET="$servicePrincipalKey"
+              azcopy login --service-principal --application-id $servicePrincipalId --tenant-id $tenantId
+              azcopy cp "useless.png" \
+              "https://usluprukssaweb123.blob.core.windows.net/\$web/useless.png"
+          addSpnToEnvironment: true
+
+
