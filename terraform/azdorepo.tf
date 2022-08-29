@@ -9,18 +9,15 @@ resource "azuredevops_git_repository" "useless" {
 
 }
 
-resource "azuredevops_git_repository_file" "rootpipeline" {
-    repository_id = azuredevops_git_repository.useless.id
-    branch = "refs/heads/main"
-    commit_message =   "initial useless seed"
-    file = ".pipelines/rootpipeline.yml"
-    content = file("${path.module}/../project_files/.pipelines/rootpipeline.yml")
-}
 
 resource "azuredevops_git_repository_file" "templatesonar" {
+    for_each = toset( local.azdostagefiles )
     repository_id = azuredevops_git_repository.useless.id
     branch = "refs/heads/main"
     commit_message =   "initial useless seed"
-    file = ".pipelines/stages/sonarcloud.yml"
-    content = file("${path.module}/../project_files/.pipelines/stages/sonarcloud.yml")
+    file = ".pipelines/${each.key}"
+    content = file("${path.module}/../project_files/.pipelines/${each.key}")
+    overwrite_on_create = true
 }
+
+

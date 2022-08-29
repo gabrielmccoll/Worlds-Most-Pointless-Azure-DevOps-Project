@@ -13,7 +13,9 @@ resource "azuredevops_build_definition" "useless" {
     branch_name = azuredevops_git_repository.useless.default_branch
     yml_path    = ".pipelines/rootpipeline.yml"
   }
-
+  depends_on = [
+    azuredevops_git_repository_file.templatesonar
+  ]
 }
 
 resource "azuredevops_resource_authorization" "useless" {
