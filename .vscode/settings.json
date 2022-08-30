@@ -23,7 +23,8 @@
     "yaml.schemas": {
         "https://raw.githubusercontent.com/microsoft/azure-pipelines-vscode/master/service-schema.json": [
             "file:///Users/gabrielmccoll/Documents/Worlds-Most-Pointless-Azure-DevOps-Project/project_files/.pipelines/stages/SonarCloud.yml",
-            "file:///Users/gabrielmccoll/Documents/Worlds-Most-Pointless-Azure-DevOps-Project/project_files/.pipelines/rootpipeline.yml"
+            "file:///Users/gabrielmccoll/Documents/Worlds-Most-Pointless-Azure-DevOps-Project/project_files/.pipelines/rootpipeline.yml",
+            "file:///Users/gabrielmccoll/Documents/Worlds-Most-Pointless-Azure-DevOps-Project/project_files/.pipelines/stages/terraform.yml"
         ]
     }
 }

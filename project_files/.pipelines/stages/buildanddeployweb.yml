@@ -1,6 +1,8 @@
 
 stages:
-- stage: Website
+- stage: website
+  variables:
+  - template: variables/dev.yml
   displayName: Website
   jobs:
   - job: Website
@@ -11,13 +13,14 @@ stages:
           scriptType: 'bash'
           scriptLocation: 'inlineScript'
           inlineScript: |
+            echo "${{variables.website}}\$web/useless.png"
             sudo apt install graphviz
             python -m pip install diagrams
             python diagram.py
               export AZCOPY_SPA_CLIENT_SECRET="$servicePrincipalKey"
               azcopy login --service-principal --application-id $servicePrincipalId --tenant-id $tenantId
               azcopy cp "useless.png" \
-              "https://usluprukssaweb123.blob.core.windows.net/\$web/useless.png"
+              "${{variables.website}}\$web/useless.png"
           addSpnToEnvironment: true
 
 

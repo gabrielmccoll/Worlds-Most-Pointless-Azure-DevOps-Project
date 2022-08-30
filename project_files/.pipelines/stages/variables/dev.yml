@@ -1,0 +1,4 @@
+variables:
+  subId: "3a6a8d54-fdf9-4100-aa23-4a6a49e24527"
+  website: "https://usluprukssaweb123.blob.core.windows.net/"
+  workingdir: terraform
