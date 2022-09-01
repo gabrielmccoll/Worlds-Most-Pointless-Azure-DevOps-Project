@@ -27,10 +27,19 @@ resource "time_rotating" "tf" {
   rotation_days = 7
 }
 
+resource "time_rotating" "fast" {
+  # rotation_days = 7
+ rotation_minutes = 1
+  
+}
+
 resource "azuread_application_password" "tf" {
   application_object_id = azuread_application.tf.object_id
   rotate_when_changed = {
-    rotation = time_rotating.tf.id
+    rotation = time_rotating.fast.id
   }
   display_name = "uselesstf"
+  lifecycle {
+    create_before_destroy = true
+  }
 }

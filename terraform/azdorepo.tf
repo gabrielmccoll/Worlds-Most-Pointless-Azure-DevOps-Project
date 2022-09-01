@@ -6,13 +6,13 @@ resource "azuredevops_git_repository" "useless" {
     init_type = "Clean"
   }
 }
-
+#https://netmemo.github.io/post/tf-map-ordering/
 #all the pipelines
 resource "azuredevops_git_repository_file" "templatesonar" {
-    for_each = toset( local.azdostagefiles )
+    for_each = { for key,rule in local.azdostagefiles : key => key }  
     repository_id = azuredevops_git_repository.useless.id
     branch = "refs/heads/main"
-    commit_message =   "pipeline files - ${each.key}"
+    commit_message =   "created by Terraform" // don't change the commit message or it reacreates every time
     file = ".pipelines/${each.key}"
     content = file("${path.module}/../project_files/.pipelines/${each.key}")
     overwrite_on_create = true
@@ -22,17 +22,17 @@ resource "azuredevops_git_repository_file" "templatesonar" {
 resource "azuredevops_git_repository_file" "diagrampy" {
     repository_id = azuredevops_git_repository.useless.id
     branch = "refs/heads/main"
-    commit_message =   "python diagrams"
+    commit_message =   "created by Terraform" // don't change the commit message or it reacreates every time
     file = "diagram.py"
     content = file("${path.module}/../project_files/diagram.py")
 }
 
 # all the terraform tfs
 resource "azuredevops_git_repository_file" "terraform" {
-    for_each = toset( local.projterrfiles )
+    for_each = { for key,rule in local.projterrfiles : key => key }    
     repository_id = azuredevops_git_repository.useless.id
     branch = "refs/heads/main"
-    commit_message =   "terraform files - ${each.key}"
+    commit_message =   "created by Terraform" // don't change the commit message or it reacreates every time
     file = "terraform/${each.key}"
     content = file("${path.module}/../project_files/terraform/${each.key}")
     overwrite_on_create = true
@@ -42,7 +42,7 @@ resource "azuredevops_git_repository_file" "terraform" {
 resource "azuredevops_git_repository_file" "terrconf" {
     repository_id = azuredevops_git_repository.useless.id
     branch = "refs/heads/main"
-    commit_message =   "terraform conf"
+    commit_message =   "created by Terraform" // don't change the commit message or it reacreates every time
     file = "terraform/backend.conf"
     content = file("${path.module}/../project_files/terraform/backend.conf")
 }
